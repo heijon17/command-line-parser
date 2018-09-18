@@ -8,11 +8,14 @@ public class HttpRequest {
     private String hostname;
     private String uri;
     private int port;
+    private int statusCode;
 
     public HttpRequest(String hostname, int port, String uri) {
         this.hostname = hostname;
         this.uri = uri;
         this.port = port;
+        
+        
     }
 
     public HttpResponse execute() throws IOException {
@@ -29,5 +32,9 @@ public class HttpRequest {
             return new HttpResponse(socket);
         }
     }
+    
+    
+    
+ 
 
 }

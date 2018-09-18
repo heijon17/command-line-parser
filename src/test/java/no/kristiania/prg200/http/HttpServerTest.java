@@ -12,17 +12,20 @@ import org.junit.Test;
 public class HttpServerTest {
 
     private static HttpEchoServer server;
+    private String path;
+   
 
     @BeforeClass
     public static void startServer() throws IOException {
-        server = new HttpEchoServer(10080);
-        
+        server = new HttpEchoServer(10084);
+        server.start();
     }
     
 
     @Test
     public void shouldWriteStatusCode() throws IOException {
-        HttpRequest request = new HttpRequest("localhost", server.getPort(), "/echo?status=200");
+    	setPath("/echo?status=200");
+        HttpRequest request = new HttpRequest("localhost", server.getPort(), path);
         HttpResponse response = request.execute();
         
         System.out.println(server.getPort());
@@ -32,7 +35,8 @@ public class HttpServerTest {
     
     @Test
     public void shouldReadOtherStatusCodes() throws IOException {
-        HttpRequest request = new HttpRequest("localhost", server.getPort(), "/echo?status=404");
+    	setPath("/echo?status=404");
+        HttpRequest request = new HttpRequest("localhost", server.getPort(), path);
         HttpResponse response = request.execute();
 
         assertThat(response.getStatusCode()).isEqualTo(404);
@@ -40,8 +44,8 @@ public class HttpServerTest {
 
     @Test
     public void shouldReadResponseHeaders() throws IOException {
-        HttpRequest request = new HttpRequest("localhost", server.getPort(),
-                "/echo?status=307&Location=http%3A%2F%2Fwww.kristiania.no");
+    	setPath("/echo?status=307&Location=http%3A%2F%2Fwww.kristiania.no");
+        HttpRequest request = new HttpRequest("localhost", server.getPort(), path);
         HttpResponse response = request.execute();
 
         assertThat(response.getStatusCode()).isEqualTo(307);
@@ -56,6 +60,10 @@ public class HttpServerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(200);
         assertThat(response.getBody()).isEqualTo("Hello world!");
+    }
+    
+    public void setPath(String path) {
+    	this.path = path;
     }
 
     public static void main(String[] args) throws IOException {
